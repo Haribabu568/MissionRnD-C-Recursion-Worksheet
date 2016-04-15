@@ -35,8 +35,56 @@ more parameters .
 
 #include<stdlib.h>
 
+void path_exists_wrapper(int*, int, int, int, int, int, int, int**, int*);
 
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	return 1;
+	int i, exist;
+	int **visit = (int **)malloc(20*sizeof(int *));
+	for (i = 0; i<20; i++)
+		visit[i] = (int *)malloc(20*sizeof(int));
+	if (rows < 1 || columns < 1 || maze == NULL)
+		return 0;
+	if (x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
+		return 0;
+	if (x1 >= rows || x2 >= rows || y1 >= columns || y2 >= columns)
+		return 0;
+	path_exists_wrapper(maze, rows, columns, x1, y1, x2, y2, visit, &exist);
+	return exist;
+}
+void path_exists_wrapper(int *maze, int rows, int columns, int x1, int y1, int x2, int y2, int **visit, int *exist)
+{
+	if (x1 == x2 && y1 == y2)
+	{
+		*exist = 1;
+		return;
+	}
+	else
+	{
+		if (*((maze + (x1 + 1)* columns) + y1) == 1 && (x1 + 1) < rows && (x1 + 1) >= 0 && visit[x1 + 1][y1] != 1)
+		{
+			visit[x1][y1] = 1;
+			x1++;
+		}
+		else if (*((maze + (x1)* columns) + (y1 - 1)) == 1 && (y1 - 1) < columns && (y1 - 1) >= 0 && visit[x1][y1 - 1] != 1)
+		{
+			visit[x1][y1] = 1;
+			y1--;
+		}
+		else if (*((maze + (x1)* columns) + (y1 + 1)) == 1 && (y1 + 1) < columns && (y1 + 1) >= 0 && visit[x1][y1 + 1] != 1)
+		{
+			visit[x1][y1] = 1;
+			y1++;
+		}
+		else if (*((maze + (x1 - 1)* columns) + y1) == 1 && (x1 - 1) < rows && (x1 - 1) >= 0 && visit[x1 - 1][y1] != 1)
+		{
+			visit[x1][y1] = 1;
+			x1--;
+		}
+		else
+		{
+			*exist = 0; return;
+		}
+	}
+	path_exists_wrapper(maze, rows, columns, x1, y1, x2, y2, visit, exist);
 }

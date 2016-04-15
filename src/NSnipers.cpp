@@ -43,6 +43,49 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
-int solve_nsnipers(int *battlefield, int n){
+int solve(int*, int);
+int problem_state(int*, int, int);
+int Place(int*, int, int, int);
+int solve_nsnipers(int *battlefield, int n)
+{
+	if (battlefield == NULL)
+		return 0;
+	int c = solve(battlefield, n);
+	return c;
+}
+int solve(int *battlefield, int n)
+{
+	if (problem_state(battlefield, 0, n) == false)
+		return 0;
+	return 1;
+}
+int problem_state(int *battlefield, int k, int n)
+{
+	if (k >= n)
+		return 1;
+	for (int i = 0; i < n; i++)
+	{
+		if (Place(battlefield, i, k, n))
+		{
+			*((battlefield + i*n) + k) = 1;
+			if (problem_state(battlefield, k + 1, n))
+				return 1;
+			*((battlefield + i*n) + k) = 0;
+		}
+	}
 	return 0;
+}
+int Place(int *battlefield, int index, int k, int n)
+{
+	int i, j;
+	for (i = 0; i < k; i++)
+		if (*((battlefield + index*n) + i))
+			return 0;
+	for (i = index, j = k; i >= 0 && j >= 0; i--, j--)
+		if (*((battlefield + i*n) + j))
+			return 0;
+	for (i = index, j = k; j >= 0 && i<n; i++, j--)
+		if (*((battlefield + i*n) + j))
+			return 0;
+	return 1;
 }
